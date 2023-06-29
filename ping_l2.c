@@ -2,6 +2,9 @@
 
 int main(int argc, char **argv)
 {
-  getrecvif();
-  return (0);
+  char  ifname[IFNAMSIZ];
+
+  memset(ifname, 0, IFNAMSIZ);
+  getrecvif(ifname);
+  printf("END: %s\n", ifname);
 }
