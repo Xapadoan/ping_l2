@@ -28,4 +28,5 @@ void  put_ifaddr(struct ifaddrs *addr)
     printf("\n\tdst:\t");
     put_sockaddr(addr->ifa_dstaddr);
   }
+  printf("\n");
 }

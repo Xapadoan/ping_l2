@@ -5,6 +5,6 @@
 #include "debug.h"
 #include "put_ifaddr.h"
 
-struct ifaddrs *getrecvif(void);
+void  getrecvif(char *ifname);
 
 #endif
