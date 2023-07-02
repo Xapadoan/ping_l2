@@ -1,4 +1,5 @@
-#ifndef PUTSOCKADDR_H
+#ifndef PL2_PUTSOCKADDR_H
+#define PL2_PUTSOCKADDR_H
 
 #include <stdio.h>
 #include <sys/socket.h>

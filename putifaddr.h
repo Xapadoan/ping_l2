@@ -1,5 +1,5 @@
-#ifndef PUTIFADDR_H
-#define PUTIFADDR_H
+#ifndef PL2_PUTIFADDR_H
+#define PL2_PUTIFADDR_H
 
 #include <stdio.h>
 #include <sys/types.h>
