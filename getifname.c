@@ -1,6 +1,6 @@
-#include "getrecvif.h"
+#include "getifname.h"
 
-void  getrecvif(char *ifname)
+void  getifname(char *ifname)
 {
   struct ifaddrs  *all;
   struct ifaddrs  *i;
