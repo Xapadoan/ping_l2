@@ -2,6 +2,7 @@
 #define PL2_GETIFNAME_H
 
 #include <ifaddrs.h>
+#include <string.h>
 #include "debug.h"
 #include "putifaddr.h"
 

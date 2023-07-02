@@ -9,13 +9,13 @@ void  getifname(char *ifname)
   i = NULL;
   if (getifaddrs(&all) != 0)
   {
-    pl2_error(PL2_LOG_LVL_ERROR, "getrecvif", errno);
+    perror("[getrecvif] Failed to getifaddrs");
     return;
   }
   if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
   {
     i = all;
-    pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Listing interfaces:");
+    debug("[getrecvif] Listing interfaces:\n");
     while (i != NULL)
     {
       putifaddr(i);
@@ -27,7 +27,7 @@ void  getifname(char *ifname)
   {
     if ((i->ifa_flags & IFF_UP && i->ifa_flags & IFF_RUNNING) && !(i->ifa_flags & (IFF_LOOPBACK | IFF_NOARP)))
     {
-      pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Chose interface:");
+      debug("[getrecvif] Chose interface:\n");
       if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
       {
         putifaddr(i);

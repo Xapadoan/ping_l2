@@ -17,6 +17,7 @@ uint32_t  getgwaddr(const char *ifname)
   if (f == NULL)
   {
     warn("[getgwaddr] Couln't open /proc/net/route, falling back on default gateway adress: %08x\n", DEFAULT_GWADDR);
+    perror("[getgwaddr]");
     return 0x0000fea9;
   }
   while (fgets(line, 100, f))
