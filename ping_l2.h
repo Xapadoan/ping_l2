@@ -3,5 +3,6 @@
 
 #include "getrecvif.h"
 #include "sendarp.h"
+#include "getgwaddr.h"
 
 #endif
