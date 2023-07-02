@@ -1,6 +1,6 @@
-#include "getrecvif.h"
+#include "getifname.h"
 
-void  getrecvif(char *ifname)
+void  getifname(char *ifname)
 {
   struct ifaddrs  *all;
   struct ifaddrs  *i;
@@ -9,16 +9,16 @@ void  getrecvif(char *ifname)
   i = NULL;
   if (getifaddrs(&all) != 0)
   {
-    pl2_error(PL2_LOG_LVL_ERROR, "getrecvif", errno);
+    perror("[getrecvif] Failed to getifaddrs");
     return;
   }
   if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
   {
     i = all;
-    pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Listing interfaces:");
+    debug("[getrecvif] Listing interfaces:\n");
     while (i != NULL)
     {
-      put_ifaddr(i);
+      putifaddr(i);
       i = i->ifa_next;
     }
   }
@@ -27,10 +27,10 @@ void  getrecvif(char *ifname)
   {
     if ((i->ifa_flags & IFF_UP && i->ifa_flags & IFF_RUNNING) && !(i->ifa_flags & (IFF_LOOPBACK | IFF_NOARP)))
     {
-      pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Chose interface:");
+      debug("[getrecvif] Chose interface:\n");
       if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
       {
-        put_ifaddr(i);
+        putifaddr(i);
       }
       memcpy(ifname, i->ifa_name, IFNAMSIZ);
       freeifaddrs(all);

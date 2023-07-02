@@ -9,38 +9,38 @@ int getifinfo(const char *ifname, uint32_t *ip, char *mac, int *ifindex)
   fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (fd <= 0)
   {
-    perror("[getifinfo] Failed to open socket\n");
+    perror("[getifinfo] Failed to open socket");
     return (-1);
   }
   if (ioctl(fd, SIOCGIFINDEX, &ifr) == -1)
   {
-    perror("[getifinfo] Failed to get index\n");
+    perror("[getifinfo] Failed to get index");
     close(fd);
     return (-1);
   }
   *ifindex = ifr.ifr_ifindex;
   if (ioctl(fd, SIOCGIFHWADDR, &ifr) == -1)
   {
-    perror("[getifinfo] Failed to get hw address\n");
+    perror("[getifinfo] Failed to get hw address");
     close(fd);
     return (-1);
   }
   memcpy(mac, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
   if (ioctl(fd, SIOCGIFADDR, &ifr) == -1)
   {
-    perror("[getifinfo] Failed to get address\n");
+    perror("[getifinfo] Failed to get address");
     close(fd);
     return (-1);
   }
   if (ifr.ifr_addr.sa_family != AF_INET)
   {
-    error("[getifinfo] Interface has no AF_INET addr\n");
+    error("[getifinfo] Interface has no AF_INET addr");
     close(fd);
     return (-1);
   }
   *ip = ((struct sockaddr_in *)&(ifr.ifr_addr))->sin_addr.s_addr;
   
-  debug("Local Ip: %02x.%02x.%02x.%02x\n", *ip >> 24 & 0x000000ff, *ip >> 16 & 0x000000ff, *ip >> 8 & 0x000000ff, *ip & 0x000000ff);
+  debug("[getifinfo] Local Ip: %02x.%02x.%02x.%02x\n", *ip >> 24 & 0x000000ff, *ip >> 16 & 0x000000ff, *ip >> 8 & 0x000000ff, *ip & 0x000000ff);
   close(fd);
   return (0);
 }
@@ -53,7 +53,7 @@ int init_arp_socket(int *fd, int ifindex)
   *fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (*fd < 0)
   {
-    perror("[init_arp_socket] Socket creation failed:\n");
+    perror("[init_arp_socket] Socket creation failed");
     return (-1);
   }
   ifhwaddr.sll_family = AF_PACKET;
@@ -61,7 +61,7 @@ int init_arp_socket(int *fd, int ifindex)
   debug("[init_arp_socket] Binding to index: %d\n", ifindex);
   if (bind(*fd, (struct sockaddr *)&ifhwaddr, sizeof(ifhwaddr)) < 0)
   {
-    perror("[init_arp_socket] Socket binding failed:\n");
+    perror("[init_arp_socket] Socket binding failed");
     close(*fd);
     return (-1);
   }
@@ -102,7 +102,7 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   debug("Send packet to: %d\n", fd);
   if ((bsent = sendto(fd, buffer, ETH_HLEN + sizeof(struct arp), 0, (struct sockaddr*)&addr, sizeof(addr))) == -1)
   {
-    perror("[sendpacket] Failed to send packet: \n");
+    perror("[sendpacket] Failed to send packet");
     return (-1);
   }
   debug("[sendpacket]: Sent %d bytes\n", bsent);
