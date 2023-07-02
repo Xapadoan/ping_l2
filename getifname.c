@@ -18,7 +18,7 @@ void  getifname(char *ifname)
     pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Listing interfaces:");
     while (i != NULL)
     {
-      put_ifaddr(i);
+      putifaddr(i);
       i = i->ifa_next;
     }
   }
@@ -30,7 +30,7 @@ void  getifname(char *ifname)
       pl2_log(PL2_LOG_LVL_DEBUG, "getrecvif", "Chose interface:");
       if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
       {
-        put_ifaddr(i);
+        putifaddr(i);
       }
       memcpy(ifname, i->ifa_name, IFNAMSIZ);
       freeifaddrs(all);

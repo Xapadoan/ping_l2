@@ -1,5 +1,5 @@
-#ifndef PUT_IFADDR_H
-#define PUT_IFADDR_H
+#ifndef PUTIFADDR_H
+#define PUTIFADDR_H
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -7,6 +7,6 @@
 #include <net/if.h>
 #include "put_sockaddr.h"
 
-void  put_ifaddr(struct ifaddrs *addr);
+void  putifaddr(struct ifaddrs *addr);
 
 #endif

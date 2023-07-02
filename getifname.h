@@ -3,7 +3,7 @@
 
 #include <ifaddrs.h>
 #include "debug.h"
-#include "put_ifaddr.h"
+#include "putifaddr.h"
 
 void  getifname(char *ifname);
 

@@ -1,6 +1,6 @@
-#include "put_ifaddr.h"
+#include "putifaddr.h"
 
-void  put_ifaddr(struct ifaddrs *addr)
+void  putifaddr(struct ifaddrs *addr)
 {
   printf("\n%s: ", addr->ifa_name);
   if (addr->ifa_flags & IFF_UP)
