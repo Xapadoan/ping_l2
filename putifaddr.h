@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <ifaddrs.h>
 #include <net/if.h>
-#include "put_sockaddr.h"
+#include "putsockaddr.h"
 
 void  putifaddr(struct ifaddrs *addr);
 

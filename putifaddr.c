@@ -12,21 +12,21 @@ void  putifaddr(struct ifaddrs *addr)
   if (addr->ifa_flags & IFF_NOARP)
     printf("NOARP ");
   printf("\n\tinet:\t");
-  put_sockaddr(addr->ifa_addr);
+  putsockaddr(addr->ifa_addr);
   if (addr->ifa_netmask)
   {
     printf("\n\tmask:\t");
-    put_sockaddr(addr->ifa_netmask);
+    putsockaddr(addr->ifa_netmask);
   }
   if (addr->ifa_broadaddr)
   {
     printf("\n\tbroad:\t");
-    put_sockaddr(addr->ifa_broadaddr);
+    putsockaddr(addr->ifa_broadaddr);
   }
   if (addr->ifa_dstaddr)
   {
     printf("\n\tdst:\t");
-    put_sockaddr(addr->ifa_dstaddr);
+    putsockaddr(addr->ifa_dstaddr);
   }
   printf("\n");
 }
