@@ -24,6 +24,6 @@ struct arp
   uint8_t   dst_addr[4];
 };
 
-int sendarp(const char *ifname, const char *dst_ip, char *hwaddr);
+int sendarp(const char *ifname, const uint32_t dst_ip, char *hwaddr);
 
 #endif

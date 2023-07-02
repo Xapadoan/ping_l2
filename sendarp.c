@@ -137,7 +137,7 @@ int readpacket(int fd, char *hwaddr)
   return (1);
 }
 
-int sendarp(const char *ifname, const char *dst_ip, char *hwaddr)
+int sendarp(const char *ifname, const uint32_t dst_ip, char *hwaddr)
 {
   uint32_t  local_ip;
   char      local_mac[ETH_ALEN];
@@ -160,7 +160,7 @@ int sendarp(const char *ifname, const char *dst_ip, char *hwaddr)
     return (-1);
   }
   debug("[sendarp]: init_arp_socket OK\n");
-  if (sendpacket(local_mac, local_ip, inet_addr(dst_ip), ifindex, sock_fd) != 0)
+  if (sendpacket(local_mac, local_ip, dst_ip, ifindex, sock_fd) != 0)
   {
     error("[sendarp]: sendpacket failed\n");
     close(sock_fd);
