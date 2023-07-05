@@ -10,6 +10,7 @@
 #include "debug.h"
 #include "bindsock.h"
 #include "sendether.h"
+#include "buildether.h"
 
 struct arp
 {

@@ -55,12 +55,9 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   int                 ret;
 
   ret = -1;
-  memset(buffer, 0, 60);
-  req = (struct ethhdr *)buffer;
+  memset(buffer, 0, 42);
+  buildether(buffer, src_mac, "ffffff", ETH_P_ARP);
   arp = (struct arp *)(buffer + ETH_HLEN);
-  memset(req->h_dest, 0xff, ETH_ALEN);
-  memcpy(req->h_source, src_mac, ETH_ALEN);
-  req->h_proto = htons(ETH_P_ARP);
   arp->hwtype = htons(ARPHRD_ETHER);
   arp->proto = htons(ETH_P_IP);
   arp->hwaddrlen = ETH_ALEN;
@@ -77,24 +74,6 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
     return (-1);
   }
   return (0);
-  /*
-  addr.sll_family = AF_PACKET;
-  addr.sll_protocol = htons(ETH_P_ARP);
-  addr.sll_ifindex = ifindex;
-  addr.sll_hatype = htons(ARPHRD_ETHER);
-  addr.sll_pkttype = htons(PACKET_BROADCAST);
-  addr.sll_halen = htons(ETH_ALEN);
-  memset(addr.sll_addr, 0, 8);
-  memcpy(addr.sll_addr, src_mac, ETH_ALEN);
-  debug("Send packet to: %d\n", fd);
-  if ((bsent = sendto(fd, buffer, ETH_HLEN + sizeof(struct arp), 0, (struct sockaddr*)&addr, sizeof(addr))) == -1)
-  {
-    perror("[sendpacket] Failed to send packet");
-    return (-1);
-  }
-  debug("[sendpacket]: Sent %d bytes\n", bsent);
-  return (0);
-  */
 }
 
 int readpacket(int fd, char *hwaddr)
