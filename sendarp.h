@@ -6,9 +6,12 @@
 #include <arpa/inet.h>
 #include <linux/if_ether.h>
 #include <linux/if_arp.h>
-#include <unistd.h>
 #include <string.h>
 #include "debug.h"
+#include "bindsock.h"
+#include "sendether.h"
+#include "buildether.h"
+#include "getifinfo.h"
 
 struct arp
 {
@@ -23,6 +26,6 @@ struct arp
   uint8_t   dst_addr[4];
 };
 
-int sendarp(const char *ifname, const uint32_t dst_ip, char *hwaddr);
+int sendarp(const struct ifinfo *local, const uint32_t dst_ip, char *hwaddr);
 
 #endif

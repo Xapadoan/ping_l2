@@ -2,16 +2,30 @@
 
 int main(int argc, char **argv)
 {
-  char        ifname[IFNAMSIZ];
   uint8_t     gw_hwaddr[ETH_ALEN];
   uint32_t    gw_ip;
   const char  dst_ip[8] = "8.8.8.8";
+  int         sock;
+  uint8_t     packet[60];
+  struct ifinfo local;
 
   gw_ip = 0;
-  memset(ifname, 0, IFNAMSIZ);
   memset(gw_hwaddr, 0, ETH_ALEN);
-  getifname(ifname);
-  gw_ip = getgwaddr(ifname);
-  sendarp(ifname, gw_ip, gw_hwaddr);
-  printf("END: %02x:%02x:%02x:%02x:%02x:%02x\n", gw_hwaddr[0], gw_hwaddr[1], gw_hwaddr[2], gw_hwaddr[3], gw_hwaddr[4], gw_hwaddr[5]);
+  memset(&local, 0, sizeof(local));
+  sock = -1;
+  if (getifinfo(&local) != 0)
+  {
+    error("[ping_l2] getifinfo failed\n");
+    return (-1);
+  }
+  gw_ip = getgwaddr(local.name);
+  sendarp(&local, gw_ip, gw_hwaddr);
+  debug("[ping_l2] GW_HWADDR: %02x:%02x:%02x:%02x:%02x:%02x\n", gw_hwaddr[0], gw_hwaddr[1], gw_hwaddr[2], gw_hwaddr[3], gw_hwaddr[4], gw_hwaddr[5]);
+  memset(packet, 0, 60);
+  bindsock(&sock, local.index, ETH_P_IP);
+  buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IP);
+  buildicmp(packet + ETH_HLEN + 20, 8, 1, 20);
+  buildip(packet + ETH_HLEN, local.addr, inet_addr(dst_ip), 20);
+  sendether(sock, local.index, packet, 60, PACKET_OUTGOING);
+  return (0);
 }
