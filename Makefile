@@ -7,6 +7,7 @@ OBJS=ping_l2.o putsockaddr.o putifaddr.o sendarp.o getgwaddr.o bindsock.o\
 $(EXE): $(OBJS)
 	$(CC) $^ -o $@
 
+buildicmp.o: buildicmp.c buildicmp.h ipcheck.o
 ipcheck.o: ipcheck.c ipcheck.h
 buildip.o: buildip.c buildip.h ipcheck.o
 getifinfo.o: getifinfo.c getifinfo.h debug.h
