@@ -11,6 +11,7 @@
 #include "bindsock.h"
 #include "sendether.h"
 #include "buildether.h"
+#include "getifinfo.h"
 
 struct arp
 {
@@ -25,6 +26,6 @@ struct arp
   uint8_t   dst_addr[4];
 };
 
-int sendarp(const char *ifname, const uint32_t dst_ip, char *hwaddr);
+int sendarp(const struct ifinfo *local, const uint32_t dst_ip, char *hwaddr);
 
 #endif
