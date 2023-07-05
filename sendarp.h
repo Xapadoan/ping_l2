@@ -6,9 +6,10 @@
 #include <arpa/inet.h>
 #include <linux/if_ether.h>
 #include <linux/if_arp.h>
-#include <unistd.h>
 #include <string.h>
 #include "debug.h"
+#include "bindsock.h"
+#include "sendether.h"
 
 struct arp
 {

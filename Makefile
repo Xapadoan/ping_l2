@@ -1,13 +1,16 @@
 CC=gcc
 EXE=ping_l2
 
-OBJS=ping_l2.o putsockaddr.o putifaddr.o getifname.o sendarp.o getgwaddr.o
+OBJS=ping_l2.o putsockaddr.o putifaddr.o getifname.o sendarp.o getgwaddr.o bindsock.o\
+	sendether.o
 
 $(EXE): $(OBJS)
 	$(CC) $^ -o $@
 
+sendether.o: sendether.c sendether.h debug.h putsockaddr.o
+bindsock.o: bindsock.c bindsock.h debug.h
 getgwaddr.o: getgwaddr.c getgwaddr.h debug.h
-sendarp.o: sendarp.c sendarp.h debug.h
+sendarp.o: sendarp.c sendarp.h debug.h bindsock.o sendether.o
 putsockaddr.o: putsockaddr.c putsockaddr.h
 getifname.o: getifname.c getifname.h debug.h putifaddr.o
 putifaddr.o: putifaddr.c putifaddr.h putsockaddr.o

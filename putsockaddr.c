@@ -24,12 +24,12 @@ void putll(struct sockaddr_ll *addr)
   unsigned int  i;
 
   i = 0;
-  while (i < 7)
+  while (i < 5)
   {
     printf("%02x:", addr->sll_addr[i]);
     i++;
   }
-  printf("%02x", addr->sll_addr[i]);
+    printf("%02x", addr->sll_addr[i]);
 }
 
 void  putsockaddr(struct sockaddr *addr)

@@ -45,29 +45,6 @@ int getifinfo(const char *ifname, uint32_t *ip, char *mac, int *ifindex)
   return (0);
 }
 
-int init_arp_socket(int *fd, int ifindex)
-{
-  struct sockaddr_ll  ifhwaddr;
-
-  memset(&ifhwaddr, 0, sizeof(struct sockaddr_ll));
-  *fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
-  if (*fd < 0)
-  {
-    perror("[init_arp_socket] Socket creation failed");
-    return (-1);
-  }
-  ifhwaddr.sll_family = AF_PACKET;
-  ifhwaddr.sll_ifindex = ifindex;
-  debug("[init_arp_socket] Binding to index: %d\n", ifindex);
-  if (bind(*fd, (struct sockaddr *)&ifhwaddr, sizeof(ifhwaddr)) < 0)
-  {
-    perror("[init_arp_socket] Socket binding failed");
-    close(*fd);
-    return (-1);
-  }
-  return (0);
-}
-
 int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifindex, int fd)
 {
   uint8_t             buffer[42];
@@ -75,7 +52,9 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   struct arp          *arp;
   struct sockaddr_ll  addr;
   unsigned int        bsent;
+  int                 ret;
 
+  ret = -1;
   memset(buffer, 0, 60);
   req = (struct ethhdr *)buffer;
   arp = (struct arp *)(buffer + ETH_HLEN);
@@ -91,6 +70,14 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   memcpy(arp->src_addr, &src_ip, 4);
   memset(arp->dst_hwaddr, 0, ETH_ALEN);
   memcpy(arp->dst_addr, &dst_ip, 4);
+  ret = sendether(fd, ifindex, buffer, 42, PACKET_BROADCAST);
+  if (ret != 0)
+  {
+    error("[sendpacket] sendether failed\n");
+    return (-1);
+  }
+  return (0);
+  /*
   addr.sll_family = AF_PACKET;
   addr.sll_protocol = htons(ETH_P_ARP);
   addr.sll_ifindex = ifindex;
@@ -107,6 +94,7 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   }
   debug("[sendpacket]: Sent %d bytes\n", bsent);
   return (0);
+  */
 }
 
 int readpacket(int fd, char *hwaddr)
@@ -154,9 +142,9 @@ int sendarp(const char *ifname, const uint32_t dst_ip, char *hwaddr)
     return (-1);
   }
   debug("[sendarp]: getifinfo OK\n");
-  if (init_arp_socket(&sock_fd, ifindex) != 0)
+  if (bindsock(&sock_fd, ifindex, ETH_P_ARP) != 0)
   {
-    error("[sendarp]: init_arp_sock failed\n");
+    error("[sendarp]: bindsock failed\n");
     return (-1);
   }
   debug("[sendarp]: init_arp_socket OK\n");
