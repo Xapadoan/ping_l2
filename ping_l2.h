@@ -7,5 +7,9 @@
 #include "getifinfo.h"
 #include "getgwaddr.h"
 #include "sendarp.h"
+#include "bindsock.h"
+#include "buildether.h"
+#include "buildip.h"
+#include "buildicmp.h"
 
 #endif
