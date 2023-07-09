@@ -64,14 +64,16 @@ int sendarp(const struct ifinfo *local, const uint32_t dst_ip, char *hwaddr)
 {
   int           sock_fd;
   int           read_ret;
+  uint32_t      local_ip;
 
+  local_ip = ((struct sockaddr_in *)&local->addr)->sin_addr.s_addr;
   read_ret = 0;
   if (bindsock(&sock_fd, local->index, ETH_P_ARP) != 0)
   {
     error("[sendarp] bindsock failed\n");
     return (-1);
   }
-  if (sendpacket(local->hwaddr, local->addr, dst_ip, local->index, sock_fd) != 0)
+  if (sendpacket(local->hwaddr, local_ip, dst_ip, local->index, sock_fd) != 0)
   {
     error("[sendarp] sendpacket failed\n");
     close(sock_fd);
