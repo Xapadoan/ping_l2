@@ -1,6 +1,6 @@
 #include "getifinfo.h"
 
-int getifname(char *ifname)
+int pickif(struct ifinfo *info, int family)
 {
   struct ifaddrs  *all;
   struct ifaddrs  *i;
@@ -9,13 +9,13 @@ int getifname(char *ifname)
   i = NULL;
   if (getifaddrs(&all) != 0)
   {
-    perror("[getifname] Failed to getifaddrs");
+    perror("[pickif] Failed to getifaddrs");
     return (-1);
   }
   if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
   {
     i = all;
-    debug("[getifname] Listing interfaces:\n");
+    debug("[pickif] Listing interfaces:\n");
     while (i != NULL)
     {
       putifaddr(i);
@@ -25,36 +25,37 @@ int getifname(char *ifname)
   i = all;
   while (i != NULL)
   {
-    if ((i->ifa_flags & IFF_UP && i->ifa_flags & IFF_RUNNING) && !(i->ifa_flags & (IFF_LOOPBACK | IFF_NOARP)))
+    if ((i->ifa_flags & IFF_UP && i->ifa_flags & IFF_RUNNING) && !(i->ifa_flags & (IFF_LOOPBACK | IFF_NOARP)) && i->ifa_addr->sa_family == family)
     {
-      debug("[getifname] Chose interface:\n");
+      debug("[pickif] Chose interface:\n");
       if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
       {
         putifaddr(i);
       }
-      memcpy(ifname, i->ifa_name, IFNAMSIZ);
+      memcpy(info->name, i->ifa_name, IFNAMSIZ);
+      memcpy(&info->addr, i->ifa_addr, sizeof(struct sockaddr));
       freeifaddrs(all);
       return (0);
     }
     i = i->ifa_next;
   }
   freeifaddrs(all);
-  error("[getifname] Found no suitable interface\n");
+  error("[pickif] Found no suitable interface\n");
   return (-1);
 }
 
-int getifinfo(struct ifinfo *info)
+int getifinfo(struct ifinfo *info, int family)
 {
   struct ifreq  ifr;
   int           fd;
 
   memset(info, 0, sizeof(struct ifinfo));
-  if (getifname(info->name) != 0)
+  if (pickif(info, family) != 0)
   {
     error("[getifinfo] getifname failed\n");
     return (-1);
   }
-  strcpy(ifr.ifr_name, info->name);
+  memcpy(&ifr.ifr_name, info->name, IFNAMSIZ);
   fd = socket(AF_PACKET, SOCK_RAW, 0);
   if (fd <= 0)
   {
@@ -75,26 +76,17 @@ int getifinfo(struct ifinfo *info)
     return (-1);
   }
   memcpy(info->hwaddr, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
-  if (ioctl(fd, SIOCGIFADDR, &ifr) == -1)
-  {
-    perror("[getifinfo] Failed to get address");
-    close(fd);
-    return (-1);
-  }
-  if (ifr.ifr_addr.sa_family != AF_INET)
-  {
-    error("[getifinfo] Interface has no AF_INET addr");
-    close(fd);
-    return (-1);
-  }
-  info->addr = ((struct sockaddr_in *)&(ifr.ifr_addr))->sin_addr.s_addr;
   
   debug(\
-    "[getifinfo] %s (%u):\n[getifinfo]\thwaddr: %02x:%02x:%02x:%02x:%02x:%02x\n[getifinfo]\taddr: %02x.%02x.%02x.%02x\n", \
+    "[getifinfo] %s (%u):\n[getifinfo]\thwaddr: %02x:%02x:%02x:%02x:%02x:%02x\n[getifinfo]\taddr: ", \
     info->name, info->index, \
-    info->hwaddr[0], info->hwaddr[1], info->hwaddr[2], info->hwaddr[3], info->hwaddr[4], info->hwaddr[5], \
-    info->addr >> 24 & 0x000000ff, info->addr >> 16 & 0x000000ff, info->addr >> 8 & 0x000000ff, info->addr & 0x000000ff\
+    info->hwaddr[0], info->hwaddr[1], info->hwaddr[2], info->hwaddr[3], info->hwaddr[4], info->hwaddr[5] \
   );
+  if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
+  {
+    putsockaddr(&info->addr);
+  }
+  debug("\n");
   close(fd);
   return (0);
 }

@@ -14,12 +14,12 @@
 #include "putifaddr.h"
 
 struct ifinfo {
-  int       index;
-  char      name[IFNAMSIZ];
-  uint8_t   hwaddr[ETH_ALEN];
-  uint32_t  addr;
+  int             index;
+  char            name[IFNAMSIZ];
+  uint8_t         hwaddr[ETH_ALEN];
+  struct sockaddr addr;
 };
 
-int getifinfo(struct ifinfo *info);
+int getifinfo(struct ifinfo *info, int family);
 
 #endif
