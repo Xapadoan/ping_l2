@@ -71,7 +71,7 @@ int sendarp(const struct ifinfo *local, const uint32_t dst_ip, char *hwaddr)
     error("[sendarp] bindsock failed\n");
     return (-1);
   }
-  if (sendpacket(local->hwaddr, local->addr, dst_ip, local->index, sock_fd) != 0)
+  if (sendpacket(local->hwaddr, local->in_addr, dst_ip, local->index, sock_fd) != 0)
   {
     error("[sendarp] sendpacket failed\n");
     close(sock_fd);
