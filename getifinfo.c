@@ -4,9 +4,15 @@ int pickif(struct ifinfo *info, int family)
 {
   struct ifaddrs  *all;
   struct ifaddrs  *i;
+  int             addr_len;
 
+  addr_len = 0;
   all = NULL;
   i = NULL;
+  if (family == AF_INET)
+    addr_len = sizeof(struct sockaddr_in);
+  else if (family == AF_INET6)
+    addr_len = sizeof(struct sockaddr_in6);
   if (getifaddrs(&all) != 0)
   {
     perror("[pickif] Failed to getifaddrs");
@@ -33,7 +39,10 @@ int pickif(struct ifinfo *info, int family)
         putifaddr(i);
       }
       memcpy(info->name, i->ifa_name, IFNAMSIZ);
-      memcpy(&info->addr, i->ifa_addr, sizeof(struct sockaddr));
+      if (family == AF_INET)
+        info->in_addr = ((struct sockaddr_in*)i->ifa_addr)->sin_addr.s_addr;
+      else if (family == AF_INET6)
+        memcpy(&(info->in6_addr), ((struct sockaddr_in6*)i->ifa_addr)->sin6_addr.s6_addr, 16);
       freeifaddrs(all);
       return (0);
     }
@@ -78,13 +87,17 @@ int getifinfo(struct ifinfo *info, int family)
   memcpy(info->hwaddr, ifr.ifr_hwaddr.sa_data, ETH_ALEN);
   
   debug(\
-    "[getifinfo] %s (%u):\n[getifinfo]\thwaddr: %02x:%02x:%02x:%02x:%02x:%02x\n[getifinfo]\taddr: ", \
+    "[getifinfo] %s (%u):\n[getifinfo]\thwaddr: %02x:%02x:%02x:%02x:%02x:%02x\n[getifinfo]\tin_addr: %u.%u.%u.%u\n", \
     info->name, info->index, \
-    info->hwaddr[0], info->hwaddr[1], info->hwaddr[2], info->hwaddr[3], info->hwaddr[4], info->hwaddr[5] \
+    info->hwaddr[0], info->hwaddr[1], info->hwaddr[2], info->hwaddr[3], info->hwaddr[4], info->hwaddr[5], \
+    ntohl(info->in_addr) >> 24 & 0x000000ff, ntohl(info->in_addr) >> 16 & 0x000000ff, ntohl(info->in_addr) >> 8 & 0x000000ff, ntohl(info->in_addr) & 0x000000ff\
   );
-  if (DEBUG_LVL >= PL2_LOG_LVL_DEBUG)
+  debug("[getifinfo]\tin6_addr: ");
+  int i = 0;
+  while (i < 16)
   {
-    putsockaddr(&info->addr);
+    printf("%02x", info->in6_addr[i]);
+    i++;
   }
   debug("\n");
   close(fd);

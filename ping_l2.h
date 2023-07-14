@@ -10,6 +10,9 @@
 #include "bindsock.h"
 #include "buildether.h"
 #include "buildip.h"
+#include "buildipv6.h"
 #include "buildicmp.h"
+#include "buildicmpv6.h"
+#include "getgwhwaddrv6.h"
 
 #endif
