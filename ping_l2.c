@@ -4,10 +4,10 @@ int main(int argc, char **argv)
 {
   uint8_t     gw_hwaddr[ETH_ALEN];
   uint32_t    gw_ip;
-  // const char  dst_ip[8] = "8.8.8.8";
-  int         family = AF_INET6;
+  const char  dst_ip[8] = "8.8.8.8";
+  int         family = AF_INET;
   int         sock;
-  uint8_t     packet[62];
+  uint8_t     packet[100];
   struct ifinfo local;
   uint8_t     broad_hwaddr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   struct sockaddr_in6 dst;
@@ -15,34 +15,22 @@ int main(int argc, char **argv)
   gw_ip = 0;
   memset(gw_hwaddr, 0, ETH_ALEN);
   memset(&local, 0, sizeof(local));
-  /*
-  dst.sin6_family = AF_INET6;
-  if (inet_pton(family, "ff02::2", &dst.sin6_addr) != 1)
-  // if (inet_pton(family, "2001:4860:4860::8888", &dst.sin6_addr) != 1)
-  {
-    error("[ping_l2] inet_pton failed\n");
-    return (-1);
-  }
-  printf("DST: ");
-  putsockaddr((struct sockaddr *)&dst);
-  */
+  memset(&dst, 0, sizeof(dst));
+  memset(packet, 0, 100);
   sock = -1;
   if (getifinfo(&local, family) != 0)
   {
     error("[ping_l2] getifinfo failed\n");
     return (-1);
   }
-  /*
-  memset(packet, 0, 62);
-  bindsock(&sock, local.index, ETH_P_IPV6);
-  buildether(packet, local.hwaddr, broad_hwaddr, ETH_P_IPV6);
-  buildipv6(packet + ETH_HLEN, local.in6_addr, dst.sin6_addr.s6_addr, 8);
-  buildicmpv6(packet + ETH_HLEN, 133, 1, 8);
-  sendether(sock, local.index, packet, 62, PACKET_OUTGOING);
-  printf("%02x", packet[0]);
-  */
   if (family == AF_INET6)
   {
+    dst.sin6_family = AF_INET6;
+    if (inet_pton(family, "2001:4860:4860::8888", &dst.sin6_addr) != 1)
+    {
+      error("[ping_l2] inet_pton failed\n");
+      return (-1);
+    }
     if (bindsock(&sock, local.index, ETH_P_IPV6) != 0)
     {
       error("[ping_l2] bindsock failed\n");
@@ -53,15 +41,33 @@ int main(int argc, char **argv)
       error("[ping_l2] gatewayinfo failed\n");
       return (-1);
     }
+  } else if (family == AF_INET) {
+    if (bindsock(&sock, local.index, ETH_P_IP) != 0)
+    {
+      error("[ping_l2] bindsock failed\n");
+      return (-1);
+    }
+    gw_ip = getgwaddr(local.name);
+    if (sendarp(&local, gw_ip, gw_hwaddr) != 0)
+    {
+      error("[ping_l2] sendarp failed\n");
+      return (-1);
+    }
   }
-  /*
-  gw_ip = getgwaddr(local.name);
-  sendarp(&local, gw_ip, gw_hwaddr);
   debug("[ping_l2] GW_HWADDR: %02x:%02x:%02x:%02x:%02x:%02x\n", gw_hwaddr[0], gw_hwaddr[1], gw_hwaddr[2], gw_hwaddr[3], gw_hwaddr[4], gw_hwaddr[5]);
-  bindsock(&sock, local.index, ETH_P_IP);
-  buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IP);
-  buildip(packet + ETH_HLEN, local.in_addr, inet_addr(dst_ip), 20);
-  sendether(sock, local.index, packet, 60, PACKET_OUTGOING);
-  */
+  if (family == AF_INET6)
+  {
+    buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IPV6);
+    buildipv6(packet + ETH_HLEN, local.in6_addr, dst.sin6_addr.s6_addr, 20);
+    buildicmpv6(packet + ETH_HLEN, 128, 1, 20);
+    sendether(sock, local.index, packet, 74, PACKET_OUTGOING);
+  }
+  if (family == AF_INET)
+  {
+    buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IP);
+    buildip(packet + ETH_HLEN, local.in_addr, inet_addr(dst_ip), 20);
+    buildicmp(packet + ETH_HLEN + 20, 8, 1, 20);
+    sendether(sock, local.index, packet, 54, PACKET_OUTGOING);
+  }
   return (0);
 }

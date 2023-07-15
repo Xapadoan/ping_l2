@@ -66,7 +66,7 @@ int sendarp(const struct ifinfo *local, const uint32_t dst_ip, char *hwaddr)
   int           read_ret;
   uint32_t      local_ip;
 
-  local_ip = ((struct sockaddr_in *)&local->addr)->sin_addr.s_addr;
+  local_ip = ((struct sockaddr_in *)&local->in_addr)->sin_addr.s_addr;
   read_ret = 0;
   if (bindsock(&sock_fd, local->index, ETH_P_ARP) != 0)
   {
