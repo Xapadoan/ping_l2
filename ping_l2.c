@@ -7,16 +7,23 @@ int main(int argc, char **argv)
   const char  dst_ip[8] = "8.8.8.8";
   int         family = AF_INET;
   int         sock;
-  uint8_t     packet[100];
+  uint8_t     packet[1500];
   struct ifinfo local;
   uint8_t     broad_hwaddr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   struct sockaddr_in6 dst;
+  struct args args;
 
+  if (parseargs(argc, argv, &parsed) != 0)
+  {
+    error("[ping_l2] parseargs failed\n");
+    return (-1);
+  }
+  /*
   gw_ip = 0;
   memset(gw_hwaddr, 0, ETH_ALEN);
   memset(&local, 0, sizeof(local));
   memset(&dst, 0, sizeof(dst));
-  memset(packet, 0, 100);
+  memset(packet, 0, 1500);
   sock = -1;
   if (getifinfo(&local, family) != 0)
   {
@@ -69,5 +76,6 @@ int main(int argc, char **argv)
     buildicmp(packet + ETH_HLEN + 20, 8, 1, 20);
     sendether(sock, local.index, packet, 54, PACKET_OUTGOING);
   }
+  */
   return (0);
 }

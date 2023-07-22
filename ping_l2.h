@@ -14,5 +14,6 @@
 #include "buildicmp.h"
 #include "buildicmpv6.h"
 #include "getgwhwaddrv6.h"
+#include "parseargs.h"
 
 #endif
