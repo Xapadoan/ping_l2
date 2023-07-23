@@ -24,7 +24,7 @@ getgwaddr.o: getgwaddr.c getgwaddr.h debug.h
 sendarp.o: sendarp.c sendarp.h debug.h bindsock.o sendether.o buildether.o getifinfo.o
 putsockaddr.o: putsockaddr.c putsockaddr.h
 putifaddr.o: putifaddr.c putifaddr.h putsockaddr.o
-ping_l2.o: ping_l2.c ping_l2.h debug.h getifinfo.o sendarp.o getgwaddr.o bindsock.o buildether.o buildip.o buildicmp.o buildicmpv6.o getgwhwaddrv6.o
+ping_l2.o: ping_l2.c ping_l2.h debug.h getifinfo.o sendarp.o getgwaddr.o bindsock.o buildether.o buildip.o buildicmp.o buildicmpv6.o getgwhwaddrv6.o args.h
 
 clean:
 	rm -f $(OBJS)
