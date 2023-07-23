@@ -6,7 +6,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "ipcheck.h"
+#include "ipv4opts.h"
 
-void  buildip(uint8_t *packet, uint32_t src, uint32_t dst, int payload_len);
+void  buildip(uint8_t *packet, uint32_t src, uint32_t dst, struct ipv4opts *opts);
 
 #endif
