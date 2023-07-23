@@ -9,7 +9,7 @@ $(EXE): $(OBJS)
 	$(CC) $^ -o $@
 
 parseargs.o: parseargs.c parseargs.h debug.h args.h
-getgwhwaddrv6.o: getgwhwaddrv6.c getgwhwaddrv6.h debug.h ipv6check.o buildipv6.o buildether.o sendether.o
+getgwhwaddrv6.o: getgwhwaddrv6.c getgwhwaddrv6.h debug.h ipv6check.o buildipv6.o buildether.o sendether.o ipv6opts.h
 buildicmpv6.o: buildicmpv6.c buildicmpv6.h ipv6check.o
 ipv6check.o: ipv6check.c ipv6check.h ipcheck.o
 buildipv6.o: buildipv6.c buildipv6.h ipv6opts.h
