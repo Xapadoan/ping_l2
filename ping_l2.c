@@ -11,7 +11,9 @@ int main(int argc, char **argv)
   uint8_t     broad_hwaddr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   struct sockaddr_in6 dst;
   struct args args;
+  unsigned int  i;
 
+  i = 0;
   if (parseargs(argc, argv, &args) != 0)
   {
     error("[ping_l2] parseargs failed\n");
@@ -63,19 +65,23 @@ int main(int argc, char **argv)
     }
   }
   debug("[ping_l2] GW_HWADDR: %02x:%02x:%02x:%02x:%02x:%02x\n", gw_hwaddr[0], gw_hwaddr[1], gw_hwaddr[2], gw_hwaddr[3], gw_hwaddr[4], gw_hwaddr[5]);
-  if (args.family == AF_INET6)
+  while (args.count == -1 || i < args.count)
   {
-    buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IPV6);
-    buildipv6(packet + ETH_HLEN, local.in6_addr, dst.sin6_addr.s6_addr, &args.ipopts.v6);
-    buildicmpv6(packet + ETH_HLEN, 128, 1, 40 + args.ipopts.v6.plen);
-    sendether(sock, local.index, packet, ETH_HLEN + 40 + args.ipopts.v6.plen, PACKET_OUTGOING);
-  }
-  if (args.family == AF_INET)
-  {
-    buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IP);
-    buildip(packet + ETH_HLEN, local.in_addr, inet_addr(args.target), &args.ipopts.v4);
-    buildicmp(packet + ETH_HLEN + args.ipopts.v4.len - sizeof(struct icmphdr) - args.size, 8, 1, args.size);
-    sendether(sock, local.index, packet, ETH_HLEN + args.ipopts.v4.len, PACKET_OUTGOING);
+    if (args.family == AF_INET6)
+    {
+      buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IPV6);
+      buildipv6(packet + ETH_HLEN, local.in6_addr, dst.sin6_addr.s6_addr, &args.ipopts.v6);
+      buildicmpv6(packet + ETH_HLEN, 128, i + 1, 40 + args.ipopts.v6.plen);
+      sendether(sock, local.index, packet, ETH_HLEN + 40 + args.ipopts.v6.plen, PACKET_OUTGOING);
+    }
+    if (args.family == AF_INET)
+    {
+      buildether(packet, local.hwaddr, gw_hwaddr, ETH_P_IP);
+      buildip(packet + ETH_HLEN, local.in_addr, inet_addr(args.target), &args.ipopts.v4);
+      buildicmp(packet + ETH_HLEN + args.ipopts.v4.len - sizeof(struct icmphdr) - args.size, 8, i + 1, args.size);
+      sendether(sock, local.index, packet, ETH_HLEN + args.ipopts.v4.len, PACKET_OUTGOING);
+    }
+    i++;
   }
   return (0);
 }
