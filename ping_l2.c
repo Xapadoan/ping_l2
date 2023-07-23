@@ -25,7 +25,10 @@ int main(int argc, char **argv)
   memset(&dst, 0, sizeof(dst));
   memset(packet, 0, 1500);
   sock = -1;
-  if (getifinfo(&local, family) != 0)
+  if (strlen(args.interface))
+    memcpy(local.name, args.interface, 20);
+  printf("%s: %d\n", local.name, strlen(local.name));
+  if (getifinfo(&local, args.family) != 0)
   {
     error("[ping_l2] getifinfo failed\n");
     return (-1);
