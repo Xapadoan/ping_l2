@@ -6,7 +6,12 @@ int sendroutersol(int fd, struct ifinfo *local)
   uint8_t             broad_hwaddr[ETH_ALEN] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
   struct sockaddr_in6 gw_addr;
   struct icmphdr      *icmp;
+  struct ipv6opts     ipopts;
 
+  ipopts.tc = 0;
+  ipopts.flow = 0;
+  ipopts.hop = 255;
+  ipopts.plen = 8;
   memset(packet, 0, 62);
   if (inet_pton(AF_INET6, "ff02::2", &gw_addr.sin6_addr) != 1)
   {
@@ -14,12 +19,12 @@ int sendroutersol(int fd, struct ifinfo *local)
     return (-1);
   }
   buildether(packet, local->hwaddr, broad_hwaddr, ETH_P_IPV6);
-  buildipv6(packet + ETH_HLEN, local->in6_addr, gw_addr.sin6_addr.s6_addr, 8);
+  buildipv6(packet + ETH_HLEN, local->in6_addr, gw_addr.sin6_addr.s6_addr, &ipopts);
   icmp = (struct icmphdr*)(packet + 40 + ETH_HLEN);
   icmp->type = 133;
   icmp->code = 0;
   icmp->checksum = 0;
-  icmp->checksum = ipv6check(packet + ETH_HLEN, 8);
+  icmp->checksum = ipv6check(packet + ETH_HLEN, ipopts.plen);
   if (sendether(fd, local->index, packet, 62, PACKET_OUTGOING) != 0)
   {
     error("[sendroutersol] sendether failed\n");

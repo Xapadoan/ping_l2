@@ -4,6 +4,7 @@
 #include <linux/icmp.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include "ipcheck.h"
 
 void  buildicmp(uint8_t *packet, uint8_t type, uint16_t seq, int len);

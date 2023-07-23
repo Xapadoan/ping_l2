@@ -31,6 +31,11 @@ int pickif(struct ifinfo *info, int family)
   i = all;
   while (i != NULL)
   {
+    if (strlen(info->name) != 0 && strcmp(info->name, i->ifa_name) != 0)
+    {
+      i = i->ifa_next;
+      continue;
+    }
     if ((i->ifa_flags & IFF_UP && i->ifa_flags & IFF_RUNNING) && !(i->ifa_flags & (IFF_LOOPBACK | IFF_NOARP)) && i->ifa_addr->sa_family == family)
     {
       debug("[pickif] Chose interface:\n");
@@ -58,7 +63,6 @@ int getifinfo(struct ifinfo *info, int family)
   struct ifreq  ifr;
   int           fd;
 
-  memset(info, 0, sizeof(struct ifinfo));
   if (pickif(info, family) != 0)
   {
     error("[getifinfo] getifname failed\n");
