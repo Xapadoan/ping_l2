@@ -4,6 +4,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdint.h>
+#include "ipv6opts.h"
 
 struct pl2_ipv6hdr
 {
@@ -15,6 +16,6 @@ struct pl2_ipv6hdr
   uint8_t   dst[16];
 };
 
-void  buildipv6(uint8_t *packet, uint8_t src[16], uint8_t dst[16], uint16_t payload_len);
+void  buildipv6(uint8_t *packet, uint8_t src[16], uint8_t dst[16], struct ipv6opts *opts);
 
 #endif

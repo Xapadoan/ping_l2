@@ -12,7 +12,7 @@ parseargs.o: parseargs.c parseargs.h debug.h args.h
 getgwhwaddrv6.o: getgwhwaddrv6.c getgwhwaddrv6.h debug.h ipv6check.o buildipv6.o buildether.o sendether.o
 buildicmpv6.o: buildicmpv6.c buildicmpv6.h ipv6check.o
 ipv6check.o: ipv6check.c ipv6check.h ipcheck.o
-buildipv6.o: buildipv6.c buildipv6.h
+buildipv6.o: buildipv6.c buildipv6.h ipv6opts.h
 buildicmp.o: buildicmp.c buildicmp.h ipcheck.o
 ipcheck.o: ipcheck.c ipcheck.h
 buildip.o: buildip.c buildip.h ipcheck.o ipv4opts.h
