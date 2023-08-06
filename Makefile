@@ -3,11 +3,13 @@ EXE=ping_l2
 
 OBJS=ping_l2.o putsockaddr.o putifaddr.o sendarp.o getgwaddr.o bindsock.o\
 	sendether.o buildether.o getifinfo.o buildip.o ipcheck.o buildicmp.o\
-	buildipv6.o ipv6check.o buildicmpv6.o getgwhwaddrv6.o parseargs.o readpacket.o
+	buildipv6.o ipv6check.o buildicmpv6.o getgwhwaddrv6.o parseargs.o readpacket.o\
+	timefromstart.o
 
 $(EXE): $(OBJS)
 	$(CC) $^ -o $@
 
+timefromstart.o: timefromstart.c timefromstart.h
 readpacket.o: readpacket.c readpacket.h debug.h
 parseargs.o: parseargs.c parseargs.h debug.h args.h
 getgwhwaddrv6.o: getgwhwaddrv6.c getgwhwaddrv6.h debug.h ipv6check.o buildipv6.o buildether.o sendether.o ipv6opts.h
