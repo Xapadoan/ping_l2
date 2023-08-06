@@ -17,6 +17,7 @@ struct args
   } ipopts;
   unsigned int  deadline;
   unsigned int  timeout;
+  unsigned int  interval;
 };
 
 #endif

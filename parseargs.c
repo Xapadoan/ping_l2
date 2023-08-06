@@ -51,6 +51,7 @@ int parseargs(int argc, char **argv, struct args *args)
   args->count = -1;
   args->deadline = 0;
   args->timeout = 0;
+  args->interval = 1000000;
   args->size = 40;
   v4.tos = 0;
   v6.tc = 0;
@@ -105,6 +106,8 @@ int parseargs(int argc, char **argv, struct args *args)
         }
         else if (argv[i][flag_pos] == 'F')
           v6.flow = atoi(argv[i + arg_pos]);
+        else if (argv[i][flag_pos] == 'i')
+          args->interval = atoi(argv[i + arg_pos]) * 1000000;
         arg_pos++;
         flag_pos++;
       }

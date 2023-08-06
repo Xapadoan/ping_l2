@@ -16,10 +16,4 @@ void  buildipv6(uint8_t *packet, uint8_t src[16], uint8_t dst[16], struct ipv6op
   hdr->hop = opts->hop;
   memcpy(&(hdr->src), src, 16);
   memcpy(&(hdr->dst), dst, 16);
-  int i = 0;
-  while (i < 16)
-  {
-    printf("%02x", dst[i]);
-    i++;
-  }
 }

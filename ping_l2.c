@@ -81,6 +81,7 @@ int main(int argc, char **argv)
       buildicmp(packet + ETH_HLEN + args.ipopts.v4.len - sizeof(struct icmphdr) - args.size, 8, i + 1, args.size);
       sendether(sock, local.index, packet, ETH_HLEN + args.ipopts.v4.len, PACKET_OUTGOING);
     }
+    usleep(args.interval);
     i++;
   }
   return (0);
