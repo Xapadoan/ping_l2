@@ -96,7 +96,7 @@ int parseargs(int argc, char **argv, struct args *args)
           v6.hop = atoi(argv[i + arg_pos]);
         }
         else if (argv[i][flag_pos] == 'w')
-          args->deadline = atoi(argv[i + arg_pos]);
+          args->deadline = atoi(argv[i + arg_pos]) * 1000000;
         else if (argv[i][flag_pos] == 'W')
           args->timeout = atoi(argv[i + arg_pos]);
         else if (argv[i][flag_pos] == 'R')

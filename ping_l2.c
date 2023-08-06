@@ -12,11 +12,18 @@ int main(int argc, char **argv)
   struct sockaddr_in6 dst;
   struct args args;
   unsigned int  i;
+  struct timeval  starttime;
+  int             fromstart;
 
   i = 0;
   if (parseargs(argc, argv, &args) != 0)
   {
     error("[ping_l2] parseargs failed\n");
+    return (-1);
+  }
+  if (gettimeofday(&starttime, NULL) != 0)
+  {
+    perror("[ping_l2]: gettimeofday");
     return (-1);
   }
   gw_ip = 0;
@@ -83,6 +90,14 @@ int main(int argc, char **argv)
       sendether(sock, local.index, packet, ETH_HLEN + args.ipopts.v4.len, PACKET_OUTGOING);
       readpacket(sock, packet, ETH_HLEN + args.ipopts.v4.len);
     }
+    fromstart = timefromstart(&starttime);
+    if (fromstart < 0)
+    {
+      error("[ping_l2]: timefromstart");
+      return (-1);
+    }
+    if (args.deadline > 0 && fromstart + args.interval > args.deadline)
+      return (0);
     usleep(args.interval);
     i++;
   }

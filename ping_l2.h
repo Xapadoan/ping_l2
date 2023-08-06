@@ -16,5 +16,6 @@
 #include "getgwhwaddrv6.h"
 #include "parseargs.h"
 #include "readpacket.h"
+#include "timefromstart.h"
 
 #endif
