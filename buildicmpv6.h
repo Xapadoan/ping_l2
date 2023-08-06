@@ -1,6 +1,7 @@
 #ifndef PL2_BUILDICMPV6_H
 #define PL2_BUILDICMPV6_H
 
+#include <sys/time.h>
 #include <linux/icmp.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
