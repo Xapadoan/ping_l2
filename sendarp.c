@@ -32,7 +32,7 @@ int sendpacket(const char *src_mac, uint32_t src_ip, uint32_t dst_ip, int ifinde
   return (0);
 }
 
-int readpacket(int fd, char *hwaddr)
+static int readpacket(int fd, char *hwaddr)
 {
   uint8_t       buffer[60];
   struct ethhdr *res;

@@ -73,6 +73,7 @@ int main(int argc, char **argv)
       buildipv6(packet + ETH_HLEN, local.in6_addr, dst.sin6_addr.s6_addr, &args.ipopts.v6);
       buildicmpv6(packet + ETH_HLEN, 128, i + 1, 40 + args.ipopts.v6.plen);
       sendether(sock, local.index, packet, ETH_HLEN + 40 + args.ipopts.v6.plen, PACKET_OUTGOING);
+      readpacket(sock, packet, ETH_HLEN + 40 + args.ipopts.v6.plen);
     }
     if (args.family == AF_INET)
     {
@@ -80,6 +81,7 @@ int main(int argc, char **argv)
       buildip(packet + ETH_HLEN, local.in_addr, inet_addr(args.target), &args.ipopts.v4);
       buildicmp(packet + ETH_HLEN + args.ipopts.v4.len - sizeof(struct icmphdr) - args.size, 8, i + 1, args.size);
       sendether(sock, local.index, packet, ETH_HLEN + args.ipopts.v4.len, PACKET_OUTGOING);
+      readpacket(sock, packet, ETH_HLEN + args.ipopts.v4.len);
     }
     usleep(args.interval);
     i++;

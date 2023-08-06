@@ -15,5 +15,6 @@
 #include "buildicmpv6.h"
 #include "getgwhwaddrv6.h"
 #include "parseargs.h"
+#include "readpacket.h"
 
 #endif

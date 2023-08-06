@@ -3,11 +3,12 @@ EXE=ping_l2
 
 OBJS=ping_l2.o putsockaddr.o putifaddr.o sendarp.o getgwaddr.o bindsock.o\
 	sendether.o buildether.o getifinfo.o buildip.o ipcheck.o buildicmp.o\
-	buildipv6.o ipv6check.o buildicmpv6.o getgwhwaddrv6.o parseargs.o
+	buildipv6.o ipv6check.o buildicmpv6.o getgwhwaddrv6.o parseargs.o readpacket.o
 
 $(EXE): $(OBJS)
 	$(CC) $^ -o $@
 
+readpacket.o: readpacket.c readpacket.h debug.h
 parseargs.o: parseargs.c parseargs.h debug.h args.h
 getgwhwaddrv6.o: getgwhwaddrv6.c getgwhwaddrv6.h debug.h ipv6check.o buildipv6.o buildether.o sendether.o ipv6opts.h
 buildicmpv6.o: buildicmpv6.c buildicmpv6.h ipv6check.o
@@ -24,7 +25,7 @@ getgwaddr.o: getgwaddr.c getgwaddr.h debug.h
 sendarp.o: sendarp.c sendarp.h debug.h bindsock.o sendether.o buildether.o getifinfo.o
 putsockaddr.o: putsockaddr.c putsockaddr.h
 putifaddr.o: putifaddr.c putifaddr.h putsockaddr.o
-ping_l2.o: ping_l2.c ping_l2.h debug.h getifinfo.o sendarp.o getgwaddr.o bindsock.o buildether.o buildip.o buildicmp.o buildicmpv6.o getgwhwaddrv6.o args.h
+ping_l2.o: ping_l2.c ping_l2.h debug.h getifinfo.o sendarp.o getgwaddr.o bindsock.o buildether.o buildip.o buildicmp.o buildicmpv6.o getgwhwaddrv6.o args.h readpacket.o
 
 clean:
 	rm -f $(OBJS)
